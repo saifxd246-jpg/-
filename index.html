@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محول العملات الاحترافي</title>
+    <!-- استيراد الخطوط والأيقونات -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        /* --- CSS: التنسيق والتصميم --- */
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --bg-light: #f8fafc;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --white: #ffffff;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--white);
+            width: 100%;
+            max-width: 450px;
+            border-radius: 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 40px 20px;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .icon-box {
+            background: rgba(255, 255, 255, 0.2);
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .input-group {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-flex {
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="number"], select {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="number"] {
+            flex: 1;
+        }
+
+        select {
+            width: 110px;
+            cursor: pointer;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+        }
+
+        .swap-container {
+            display: flex;
+            justify-content: center;
+            margin: -35px 0 -15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .swap-btn {
+            background: white;
+            border: 1px solid var(--border);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+
+        .swap-btn:hover {
+            color: var(--primary);
+            transform: rotate(180deg);
+            border-color: var(--primary);
+        }
+
+        .result-section {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .result-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .result-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            gap: 8px;
+            direction: ltr; /* لضمان ترتيب العملة والمبلغ */
+        }
+
+        .result-currency {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .info-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #eff6ff;
+            color: var(--primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-top: 20px;
+            font-weight: 500;
+            direction: ltr;
+        }
+
+        .footer {
+            background: #f8fafc;
+            padding: 15px 30px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .refresh-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 600;
+        }
+
+        .refresh-btn:hover {
+            text-decoration: underline;
+        }
+
+        .spinning {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .error-msg {
+            background: #fff7ed;
+            color: #c2410c;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+            border: 1px solid #ffedd5;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <!-- الترويسة -->
+        <div class="header">
+            <div class="icon-box">
+                <i data-lucide="coins"></i>
+            </div>
+            <h1>محول العملات المباشر</h1>
+            <p>حوّل بين الدولار والجنيه وأكثر</p>
+        </div>
+
+        <div class="content">
+            <div id="errorBox" class="error-msg">
+                عذراً، فشل الاتصال بالإنترنت. يتم عرض أسعار تقريبية.
+            </div>
+
+            <!-- إدخال المبلغ -->
+            <div class="input-group">
+                <label>أدخل المبلغ</label>
+                <div class="input-flex">
+                    <input type="number" id="amountInput" value="1" min="0" step="any">
+                    <select id="fromCurrency">
+                        <option value="USD" selected>USD</option>
+                        <option value="EGP">EGP</option>
+                        <option value="EUR">EUR</option>
+                        <option value="GBP">GBP</option>
+                        <option value="SAR">SAR</option>
+                        <option value="AED">AED</option>
+                        <option value="KWD">KWD</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- زر التبديل -->
+            <div class="swap-container">
+                <button class="swap-btn" id="swapBtn">
+                    <i data-lucide="arrow-up-down"></i>
+                </button>
+            </div>
+
+            <!-- العملة المستهدفة -->
+            <div class="input-group">
+                <label>إلى عملة</label>
+                <div class="input-flex">
+                    <select id="toCurrency" style="width: 100%;">
+                        <option value="USD">🇺🇸 دولار أمريكي (USD)</option>
+                        <option value="EGP" selected>🇪🇬 جنيه مصري (EGP)</option>
+                        <option value="EUR">🇪🇺 يورو (EUR)</option>
+                        <option value="GBP">🇬🇧 جنيه إسترليني (GBP)</option>
+                        <option value="SAR">🇸🇦 ريال سعودي (SAR)</option>
+                        <option value="AED">🇦🇪 درهم إماراتي (AED)</option>
+                        <option value="KWD">🇰🇼 دينار كويتي (KWD)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- النتيجة -->
+            <div class="result-section">
+                <p class="result-label">النتيجة المحسوبة</p>
+                <div class="result-value">
+                    <span id="resultCurrencyText" class="result-currency">EGP</span>
+                    <span id="resultValueText">0.00</span>
+                </div>
+                <div class="info-badge">
+                    <i data-lucide="info" style="width: 14px;"></i>
+                    <span id="rateInfoText">1 USD = 47.30 EGP</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- التذييل -->
+        <div class="footer">
+            <div>آخر تحديث: <span id="lastUpdateText">جاري التحميل...</span></div>
+            <button class="refresh-btn" id="refreshBtn">
+                <i data-lucide="refresh-cw" id="refreshIcon" style="width: 14px;"></i>
+                تحديث
+            </button>
+        </div>
+    </div>
+
+    <script>
+        /* --- JavaScript: المنطق والبرمجة --- */
+        
+        // البيانات الاحتياطية (Fallback)
+        const fallbackRates = {
+            USD: 1, EGP: 47.30, EUR: 0.92, GBP: 0.79, SAR: 3.75, AED: 3.67, KWD: 0.31
+        };
+
+        let currentRates = { ...fallbackRates };
+        const apiURL = 'https://open.er-api.com/v6/latest/USD';
+
+        // عناصر واجهة المستخدم
+        const amountInput = document.getElementById('amountInput');
+        const fromSelect = document.getElementById('fromCurrency');
+        const toSelect = document.getElementById('toCurrency');
+        const resultValue = document.getElementById('resultValueText');
+        const resultCurrency = document.getElementById('resultCurrencyText');
+        const rateInfo = document.getElementById('rateInfoText');
+        const lastUpdate = document.getElementById('lastUpdateText');
+        const errorBox = document.getElementById('errorBox');
+        const swapBtn = document.getElementById('swapBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const refreshIcon = document.getElementById('refreshIcon');
+
+        // جلب أسعار الصرف من الإنترنت
+        async function fetchRates() {
+            refreshIcon.classList.add('spinning');
+            try {
+                const response = await fetch(apiURL);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                
+                currentRates = data.rates;
+                const now = new Date();
+                lastUpdate.innerText = now.toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'});
+                errorBox.style.display = 'none';
+            } catch (error) {
+                console.error("Fetch error:", error);
+                errorBox.style.display = 'block';
+                lastUpdate.innerText = "بيانات قديمة";
+            } finally {
+                refreshIcon.classList.remove('spinning');
+                updateConversion();
+            }
+        }
+
+        // منطق الحساب والتحويل
+        function updateConversion() {
+            const amount = parseFloat(amountInput.value) || 0;
+            const from = fromSelect.value;
+            const to = toSelect.value;
+
+            if (currentRates[from] && currentRates[to]) {
+                // التحويل: المبلغ / سعر عملة المصدر * سعر عملة الهدف
+                const converted = (amount / currentRates[from]) * currentRates[to];
+                resultValue.innerText = converted.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                resultCurrency.innerText = to;
+
+                // تحديث نص معلومة الصرف (1 وحدة كم تساوي)
+                const singleRate = (1 / currentRates[from]) * currentRates[to];
+                rateInfo.innerText = `1 ${from} = ${singleRate.toFixed(4)} ${to}`;
+            }
+        }
+
+        // تبديل العملات
+        function swapCurrencies() {
+            const temp = fromSelect.value;
+            fromSelect.value = toSelect.value;
+            toSelect.value = temp;
+            updateConversion();
+        }
+
+        // مستمعي الأحداث (Event Listeners)
+        amountInput.addEventListener('input', updateConversion);
+        fromSelect.addEventListener('change', updateConversion);
+        toSelect.addEventListener('change', updateConversion);
+        swapBtn.addEventListener('click', swapCurrencies);
+        refreshBtn.addEventListener('click', fetchRates);
+
+        // البدء عند تحميل الصفحة
+        window.onload = () => {
+            lucide.createIcons(); // تفعيل الأيقونات
+            fetchRates();
+        };
+    </script>
+</body>
+</html>
